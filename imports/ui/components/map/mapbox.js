@@ -10,7 +10,6 @@ import MapBox from '/imports/utils/mapbox.js';
 import html2canvas from '/imports/utils/html2canvas.js';
 import './mapbox.html';
 
-
 let intervalId;
 let loaded_coordinates = [];
 let animatedMarker;
@@ -80,10 +79,6 @@ Template.mapboxVideo.onRendered(function() {
   const map = MapBox.maps['animationMap'].instance;
 
   map.on('load', () => {
-
-    let points;
-    let routePoints;
-
     const name = 'polyline';
     const isAnimated = true;
 
@@ -92,7 +87,9 @@ Template.mapboxVideo.onRendered(function() {
       weight: 6,
       name,
     };
-
+    
+    // map.showCollisionBoxes = true;
+    
     const stravaPath = {
       distance: 8000,
       //start_latlng: result.start_latlng,
@@ -111,6 +108,11 @@ Template.mapboxVideo.onRendered(function() {
     // loaded_coordinates.push(...poly);
     for (const x of poly) loaded_coordinates.push(x);
 
+    const firstPoint = loaded_coordinates[0];
+    if (animateMarkerValue.checked) {
+      console.log(firstPoint);
+      addMarkerPoint(firstPoint);
+    }
 
     //Once everything is loadaded (polylines, markers) fitBounds
     // MapBox.fitBounds('animationMap', loaded_coordinates);
@@ -143,20 +145,20 @@ Template.mapboxVideo.helpers({
     if (intervalValueSpan) {
       intervalValueSpan.innerHTML = 20 + ' ms';
     }
-    return 100;
+    return 80;
   },
   zoom() {
     let zoomValueSpan = $('#zoomValue');
     if (zoomValueSpan) {
       zoomValueSpan.text(8);
     }
-    return 10;
+    return 12;
   },
   bearing() {
-    return 50;
+    return 40;
   },
   pitch() {
-    return 70;
+    return 60;
   },
   step() {
     return 1;
@@ -301,7 +303,7 @@ Template.mapboxVideo.events({
     let coveredDistance = 8000;
     let fullDistance = 8000;
 
-    let iconUrl =Meteor.absoluteUrl() + '/img/TeamUmbaliUser.png';
+    let iconUrl = Meteor.absoluteUrl() + '/img/TeamUmbaliUser.png';
 
     let el = document.createElement('div');
     el.className = 'marker-avatar';
@@ -693,7 +695,7 @@ const videoAnimationCapture = (name, polys, fullDistance, coveredDistance, marke
   }
 
   if (defaults.isMarkerAnimated) {
-    addMarkerPoint(firstPoint);
+    // addMarkerPoint(firstPoint);
     // marker.setLngLat(firstPoint);
     // MapBox.addMarker(name, marker);
   }
@@ -789,9 +791,10 @@ const addMarkerPoint = (firstPoint) => {
     map.removeSource('point');
   }
 
-  html2canvas(document.getElementById('original'), { allowTaint: true, useCORS: true, backgroundColor: "rgba(0,0,0,0)" }).then(canvas => {
-    const imgUrl = canvas.toDataURL();
-
+  // html2canvas(document.getElementById('original'), { allowTaint: true, useCORS: true, backgroundColor: "rgba(0,0,0,0)" }).then(canvas => {
+    const imgUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAbCAYAAACN1PRVAAAAAXNSR0IArs4c6QAABJlJREFUSEudVn1olWUU/533435s9yOdM9na1hQbicmGbugWMpZDaGClEmmwlayBIyLCEA36w2JlUomFIzWt6I8yGsLIxK8/hKI/rAVXHG0tGsJSxub93Ht33/s8J567b+9971bnnxfe8/F7zjm/85yHkEeYWQfgGx8f95um+Twzv0ZEFfNc4gAuaZr2LjOP+Hy+OBFZTiHJSTExMVEuhNgipXyTiDbmO9S0ThLRSSHEOdu2B4uLi2MP+uQEi0QiezVNU5k8swSQB02Gmflrl8t12uv1Ds9XZoHFYrFXmfkdAA/9D6AZFwHgR03T2n0+372ZnwvAFJCU8ggRLXMEYuDq1RsY+ecempu3oqRkFZjZyfyXQCCwJQtMlU7VHEAwlycR4cCBI7gV6oeUDCHScHvcaGnZhvb2F+FymU6A/YFAYJ1SZjILh8NrNE07BaApl8fo6DgOH+5C/+0BKNAsIeDKlfPweNy53JmZ3wgGg8dJ0TuRSOyVUn6Vy9KykvjkxOfo7b2ct4UnT76PJzY87mQzqOt6I4XD4WVEdJOIVueyDIX68dGHn2Fo6G+wlBBSQAgbUgqoTmmkwzBM7N69Ay/seRYlJQ9nJ05kMfMJun//frWu631OfertvYhDh96GNWGBWSIt0hkwIRThAE2bAnOZbuzctQPHjr0HKWWucL0UjUbPAnjZMf/BP9HV9TF+77uF8tJiNDdvRtXqR1DgNgE7BegG4PJi/+tH0dnZiv2dHU7s/EOBJQHk7Kw6gGL18eOnUFW5Ck0b18Jf6IHLZUBTRFFK9SXCo5vb8Nuvl2CahtO5hQJzHJIZrwsXfkBNeRDrH5t/LS6MeXtMoqzCWZ+h/lLA1IR4Jsdh2urezRZBBhKFJaAMZZxliWBTAdyTYZjpOIinCMAgCN2DpKcITFpeoP+Q2UwcgmnHQKyYSGAipI0CMKlNtLhQJBL5i4gqFzcFYFmgkRFQPA4tHAbdvQtZVgaxaRPgci0WIqLK+AoAdVXlFS0UgufoUdDYGEjNkZoz286AqE7Fr18HTc+eQ6CfKBaLFTOzWgPZl14yCX1gAGZPD4wbNxSb8nSfkK6qgqitRbqlBXLNmqmxmBYi+pbGxsYChmH0ENFT8yOpTApaW0H60vqx4BRSYrKtDamODsDrVUMeBvBWBjoajaqdc3F2YWoaChsaoFmOz4nFqp4Z+Inuboi6OrUpLvv9/u0ZsOlSdgFoz1B0cBC+PXsWD7iIRbq6GtaZM0xE2/x+//XZolqWVWnb9qdgftq7bx+MUCg71GQScHvm/qvrSmUvBeDzZ9lzIoF4f/9zgUDgQiaJ+RaWZVWkgO/8TU21inUL5OBhoK4eMAgYGgIMHSgtA9RrTyjQceCl1jmXZBKiqGi30df3/dyU5igFL19+BytWlM4eJmkB3V8AW3Mu8qkIqRSwrhwIBsG2zZRO76Q7dzIZ5QVTStHQcFobHW2EepROTproPgc82ejcpVQKXLM2gpUrb4oNGz4wz57NWu2Oj1QVlevrKxCNHkQiUclffrOeaupK1L6cj8jMCSIKQYhhe9f2n13Xrp1wOtG/B3bg/I7RLxsAAAAASUVORK5CYII=";
+    // canvas.toDataURL();
+    // console.log(imgUrl);
     let point = {
       'type': 'FeatureCollection',
       'features': [{
@@ -809,7 +812,7 @@ const addMarkerPoint = (firstPoint) => {
       function(error, image) {
         if (error) throw error;
 
-        // if (map.hasImage('marker')) map.removeImage('marker');
+        if (map.hasImage('marker')) map.removeImage('marker');
         if (!map.hasImage('marker')) {
           map.addImage('marker', image);
         }
@@ -824,14 +827,17 @@ const addMarkerPoint = (firstPoint) => {
           'source': 'point',
           'layout': {
             'icon-image': 'marker',
+            'icon-anchor': 'center',
+            'icon-offset': [0, 0],
+            'symbol-placement': 'point',
             'icon-allow-overlap': true,
             'icon-ignore-placement': true
           }
         });
       });
-  }).catch(e => {
-    console.log(e);
-  });
+  // }).catch(e => {
+  //   console.log(e);
+  // });
 };
 
 const loadPolyline = (options) => {
