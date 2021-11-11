@@ -1,0 +1,84 @@
+<template name="mapboxVideo">
+  <div class="wrapper">
+    <div class="row">
+      <div class="col">
+        <div id="map"></div>
+        <div class="map-overlay top">
+          <div class="map-overlay-inner">
+            <fieldset>
+              <label>Select easing function</label>
+              <select id="easing" name="easing">
+                      <option value="easeIn">Ease In (Default)</option>
+                       <option value="easeInCubic">Ease In Cubic</option>
+                       <option value="easeOutQuint">Ease Out Quint</option>
+                       <option value="easeInOutCirc">Ease In/Out Circ</option>
+                       <option value="easeOutBounce">Ease Out Bounce</option>
+                    </select>
+            </fieldset>
+            <fieldset>
+              <label for="interval">Animation Interval::&nbsp;<span id="intervalValue"></span></label>
+              <input type="range" id="interval" name="interval" min="0" max="500" step="5" value="{{interval}}" />
+            </fieldset>
+            <fieldset>
+              <label for="zoom">Zoom::&nbsp;<span id="zoomValue"></span></label>
+              <input type="range" id="zoom" name="zoom" min="0" max="20" step="1" value="{{zoom}}" />
+            </fieldset>
+            <fieldset>
+              <label>Animate Camera</label>
+              <input type="checkbox" id="animate" name="animate" {{isAnimateChecked}} /> &nbsp;(
+              <label for="animate" id="animateLabel"></label>)
+            </fieldset>
+            <fieldset>
+              <label>Animate Marker</label>
+              <input type="checkbox" id="animateMarker" name="animateMarker" {{isAnimateMarkerChecked}} /> &nbsp;(
+              <label for="animateMarker" id="animateMarkerLabel"></label>)
+            </fieldset>
+            <fieldset class="offset">
+              <label for="bearing">Bearing</label>
+              <input type="number" id="bearing" name="bearing" min="-100" max="360" step="1" value="{{bearing}}" />
+            </fieldset>
+            <fieldset class="offset">
+              <label for="pitch">Pitch</label>
+              <input type="number" id="pitch" name="pitch" min="0" max="90" step="1" value="{{pitch}}" />
+            </fieldset>
+            <fieldset class="offset">
+              <label for="step">Step</label>
+              <input type="number" id="step" name="step" min="1" max="350" step="1" value="{{step}}" />
+            </fieldset>
+            <fieldset>
+              <label for="quality">Video quality::&nbsp;<span id="qualityValue"></span></label>
+              <input type="range" id="quality" name="quality" min="0" max="100" step="1" value="80" />
+            </fieldset>
+            <fieldset>
+              <label for="frameRate">FrameRate::&nbsp;<span id="frameRateValue"></span></label>
+              <input type="range" id="frameRate" name="frameRate" min="0" max="240" step="1" value="60" />
+            </fieldset>
+            <!--<fieldset>-->
+            <!--   <label>Record Video</label>-->
+            <!--   <input type="checkbox" id="video" name="video" {{isVideoChecked}} />-->
+            <!--   &nbsp;(<label for="video" id="videoLabel"></label>)-->
+            <!--</fieldset>-->
+            <button type="button" id="animateButton" name="test-animation">Animate</button>
+            <!--<button type="button" id="saveButton" data-id="{{challengeId}}" name="save-animation">Save</button>-->
+            <button type="button" id="applyButton" name="apply-settings">Apply</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <video id="recorded" playsinline></video>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 map-overlay-inner">
+        <div>
+          <button id="record">Start Recording</button>
+          <button id="play" disabled>Play</button>
+          <button id="download" disabled>Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="avatar avatar-small avatar-circle pull-left" id="original">
+      <img class="avatar-image" src="{{imageUrl}}" />
+  </div>
+</template>
